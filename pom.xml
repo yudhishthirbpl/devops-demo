@@ -5,10 +5,10 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>demo</artifactId>
-	<version>${build-no}-SNAPSHOT</version>
+	<version>${build-no}</version>
 	<packaging>jar</packaging>
 
-	<name>demo</name>
+	<name>devops-demo</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
