@@ -18,7 +18,7 @@ public class CarService {
 		car.setModel("swift-nd");
 		car.setModelYear("2017");
 		car.setModelRegion("EMEA");
-		car.setModelDesc("New Design Swift for EMEA");
+		car.setModelDesc("New Design Swift for EMEA region");
 		cars.put(car.getModel(), car);
 
 		car = new Car();
@@ -26,7 +26,31 @@ public class CarService {
 		car.setModel("X1-nd");
 		car.setModelYear("2017");
 		car.setModelRegion("EMEA");
-		car.setModelDesc("New Design X1 for EMEA");
+		car.setModelDesc("New Design X1 for EMEA region");
+		cars.put(car.getModel(), car);
+		
+		car = new Car();
+		car.setMake("hyundai");
+		car.setModel("creta-lq");
+		car.setModelYear("2017");
+		car.setModelRegion("APAC");
+		car.setModelDesc("New Design Creta for APAC region");
+		cars.put(car.getModel(), car);
+		
+		car = new Car();
+		car.setMake("Tata");
+		car.setModel("nexon");
+		car.setModelYear("2017");
+		car.setModelRegion("APAC,MENA");
+		car.setModelDesc("New Design Nexon for APAC and MENA regions");
+		cars.put(car.getModel(), car);
+		
+		car = new Car();
+		car.setMake("jlr");
+		car.setModel("discovery-sp");
+		car.setModelYear("2017");
+		car.setModelRegion("APAC");
+		car.setModelDesc("New Design discovery sports for APAC");
 		cars.put(car.getModel(), car);
 
 	}

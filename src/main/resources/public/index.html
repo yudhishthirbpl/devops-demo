@@ -1,0 +1,57 @@
+<!doctype html>
+<html ng-app="CarDashboard">
+	<head>
+		<title>Cars Reports</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    	<script src="carService.js"></script>
+    	<link rel="stylesheet" href="cardemo.css">
+	</head>
+
+	<body>
+		<div id="demoFont">Cars Dashboard</div>
+		<div id="dashboard" ng-controller="CarDashboard">
+		
+			<table class="blueTable">
+				<thead>
+				<tr>
+					<th>Model</th>
+					<th>Description</th>
+				</tr>
+				</thead>
+				<tbody>
+				
+				<tr ng-repeat="car in cars">
+				<td><a href ng-click="showModelDetails(car.model)">{{car.model}}</a></td>
+				<td>{{car.modelDesc}}</td>
+				</tr>
+				
+				</tbody>
+			</table>
+		<br>
+		<div id="details">
+			<table class="blueTable">
+				<thead>
+				<tr>
+					<th>Make</th>
+					<th>Model</th>
+					<th>Model-Year</th>
+					<th>Model-Region</th>
+					<th>Description</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>{{car.make}}</td>
+					<td>{{car.model}}</td>
+					<td>{{car.modelYear}}</td>
+					<td>{{car.modelRegion}}</td>
+					<td>{{car.modelDesc}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>			
+		</div>
+		<br>
+			
+	</body>
+</html>
