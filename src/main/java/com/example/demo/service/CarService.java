@@ -19,6 +19,7 @@ public class CarService {
 		car.setModelYear("2017");
 		car.setModelRegion("EMEA");
 		car.setModelDesc("New Design Swift for EMEA region");
+		car.setCo2e("10");
 		cars.put(car.getModel(), car);
 
 		car = new Car();
@@ -27,6 +28,7 @@ public class CarService {
 		car.setModelYear("2017");
 		car.setModelRegion("EMEA");
 		car.setModelDesc("New Design X1 for EMEA region");
+		car.setCo2e("16");
 		cars.put(car.getModel(), car);
 		
 		car = new Car();
@@ -35,6 +37,7 @@ public class CarService {
 		car.setModelYear("2017");
 		car.setModelRegion("APAC");
 		car.setModelDesc("New Design Creta for APAC region");
+		car.setCo2e("17");
 		cars.put(car.getModel(), car);
 		
 		car = new Car();
@@ -43,6 +46,7 @@ public class CarService {
 		car.setModelYear("2017");
 		car.setModelRegion("APAC,MENA");
 		car.setModelDesc("New Design Nexon for APAC and MENA regions");
+		car.setCo2e("8");
 		cars.put(car.getModel(), car);
 		
 		car = new Car();
@@ -51,6 +55,7 @@ public class CarService {
 		car.setModelYear("2017");
 		car.setModelRegion("APAC");
 		car.setModelDesc("New Design discovery sports for APAC");
+		car.setCo2e("5");
 		cars.put(car.getModel(), car);
 
 	}

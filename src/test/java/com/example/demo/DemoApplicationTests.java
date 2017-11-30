@@ -32,5 +32,10 @@ public class DemoApplicationTests {
 	public void validateBMWX1ND() {
 		assertEquals(testCarModel,carService.getCar("X1-nd").getModel());
 	}
+	
+	@Test
+	public void validateSwiftND() {
+		assertEquals(testCarModel,carService.getCar("swift-nd").getModel());
+	}
 
 }

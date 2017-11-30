@@ -7,6 +7,19 @@ public class Car {
 	private String modelYear;
 	private String modelRegion;
 	private String modelDesc;
+	private String co2e;
+	/**
+	 * @return the co2e
+	 */
+	public String getCo2e() {
+		return co2e;
+	}
+	/**
+	 * @param co2e the co2e to set
+	 */
+	public void setCo2e(String co2e) {
+		this.co2e = co2e;
+	}
 	/**
 	 * @return the make
 	 */
