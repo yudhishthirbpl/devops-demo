@@ -1,0 +1,114 @@
+#!groovy
+pipeline {
+    agent any
+    environment {
+        VERSION_NUMBER = VersionNumber(projectStartDate: '2017-12-01', versionNumberString: '1.0.${BUILDS_THIS_YEAR}', versionPrefix: '')
+    }
+    stages {
+        stage('Init') {
+            steps {
+                slackSend color: "good", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.VERSION_NUMBER} "
+            }//end of step
+        }//end of Warm-Up stage
+        
+        stage('SCM'){
+            steps {
+                    checkout([$class: 'GitSCM',
+                            branches: [[name: 'master']],
+                            doGenerateSubmoduleConfigurations: false,
+                            extensions: [[$class: 'CleanCheckout']],
+                            submoduleCfg: [],
+                            userRemoteConfigs: [[credentialsId: 'github.scm.account.id', url: "https://github.com/yudhishthirbpl/devops-demo.git"]]
+                    ])
+            }//end of step - SCM
+        }//end of stage - SCM
+        stage('Build'){
+            steps {
+                  sh "${env.WHICH_MVN} -q clean package \"-Dmaven.test.skip=true\" \"-Dbuild-no=${env.VERSION_NUMBER}\""  
+             }//end of step
+        }//end of build stage
+        stage('Review'){
+            steps {
+                sh "${env.WHICH_MVN} -q clean package \"-Dbuild-no=${env.VERSION_NUMBER}\" \"-Dmaven.test.skip=false\" org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.host.url=\"http://localhost:9000\" -Dsonar.login=\"ykaushik\" -Dsonar.password=\"cq61Presario\" -Dsonar.projectName=\"devops-demo\" -Dsonar.projectVersion=\"${env.VERSION_NUMBER}\" -Dsonar.sourceEncoding=\"UTF-8\""
+             }
+        }//end of build stage
+        stage('Artifactory'){
+            steps { 
+                    script{
+                    def server = Artifactory.newServer url: "http://localhost:8081/artifactory", username: "ykaushik", password: "cq61Presario"
+                    def uploadSpec = """{
+                                         "files": [
+                                                 {
+                                                    "pattern": "target/*demo*.jar",
+                                                    "target": "devops-demo/demo-jar/"
+                                                 }
+                                                ]
+                                        }"""
+                    def buildInfo = Artifactory.newBuildInfo()
+                    buildInfo.name = "devops-demo"
+                    buildInfo.number = "${VERSION_NUMBER}"
+                    
+                    server.upload spec: uploadSpec, buildInfo: buildInfo
+                    server.publishBuildInfo buildInfo
+                    server.upload(uploadSpec)
+                    
+                    }
+                }//End of Step
+        }//end of Push-To-Artifactory         
+        stage('Deploy:Dev'){
+            steps {
+                sh "cp target/*demo*.jar /tmp/"
+            }
+        }//end of Deploy 
+        /*
+        stage('Fx:Selenium'){
+            steps {
+                echo 'executing Deploy'
+            }
+        }//end of Fx:Selenium
+        stage('Deploy:QA'){
+            steps {
+                echo 'executing Deploy'
+            }
+        }//end of Deploy:QA
+        */
+    }//end of stages
+    post {
+        always {
+            //Clearing workspace
+            junit allowEmptyResults: true, keepLongStdio: true, testResults: "target/surefire-reports/*.xml"
+            deleteDir()
+            echo 'This will always run'
+        }
+        success {
+            echo 'This will run only if successful'
+            slackSend color: "good", message: "Build Completed Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.VERSION_NUMBER} "
+        }
+        failure {
+            echo 'This will run only if failed'
+            slackSend color: "danger", message: "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.VERSION_NUMBER} "
+        }
+        unstable {
+            echo 'This will run only if the run was marked as unstable'
+        }
+        changed {
+            echo 'This will run only if the state of the Pipeline has changed'
+            echo 'For example, if the Pipeline was previously failing but is now successful'
+        }
+    }
+}
+/*
+                echo "ID ............... ${env.BUILD_ID}"
+                echo "NO ............... ${env.BUILD_NUMBER}"
+                echo "TAG .............. ${env.BUILD_TAG}"
+                echo "URL .............. ${env.BUILD_URL}"
+                echo "JOB-URL ...........${env.JOB_URL}"
+                echo "Java ..............${env.WHICH_JAVA}"
+                echo "Mvn .............. ${env.WHICH_MVN}"
+                echo "Git .............. ${env.WHICH_GIT}"
+                parameters {
+                  string(name: "stash_branch", defaultValue: "develop", description: "Stash branch to Build")
+                  string(name: "env_to_deploy", defaultValue: "dev", description: "Target Environment to Deploy Code")
+                } 
+                
+*/
