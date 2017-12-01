@@ -35,7 +35,7 @@ public class DemoApplicationTests {
 	
 	@Test
 	public void validateSwiftND() {
-		assertEquals("swift-nd23",carService.getCar("swift-nd").getModel());
+		assertEquals("swift-nd",carService.getCar("swift-nd").getModel());
 	}
 
 }
