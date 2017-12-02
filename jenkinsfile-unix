@@ -27,32 +27,30 @@ pipeline {
         }//end of stage - SCM
         stage('Build'){
             steps {
-                  sh "${env.WHICH_MVN} -q clean package \"-Dmaven.test.skip=true\" \"-Dbuild-no=${env.BUILD_VERSION_NUMBER}\""  
+                  sh "${env.WHICH_MVN} -q clean package \"-Dmaven.test.skip=false\" \"-Dbuild-no=${env.BUILD_VERSION_NUMBER}\""  
              }//end of step
         }//end of build stage
         stage('Review'){
             steps {
-                withSonarQubeEnv("sonarqube-lh-67") {
-                    sh "${env.WHICH_MVN} -q clean package \"-Dbuild-no=${env.BUILD_VERSION_NUMBER}\" \"-Dmaven.test.skip=false\" org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectName=\"devops-demo\" -Dsonar.projectVersion=\"${env.VERSION_NUMBER}\" -Dsonar.sourceEncoding=\"UTF-8\""
-                }
+                    withSonarQubeEnv("sonarqube-lh-67") {
+                        sh "${env.WHICH_MVN} \"-Dbuild-no=${env.BUILD_VERSION_NUMBER}\" \"-Dmaven.test.skip=false\" org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.projectName=\"devops-demo-dev-to-qa\" -Dsonar.projectVersion=\"${env.BUILD_VERSION_NUMBER}\" -Dsonar.sourceEncoding=\"UTF-8\" -Dsonar.language=\"java\""    
+                    }
              }
         }//end of Review stage
-        /*
         stage('QG'){
-         steps{
-             script{
-                 timeout(time: 30, unit: 'SECONDS') {
-                      withSonarQubeEnv("sonarqube-lh-67") {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                        }
-                      }
-                  }
+            steps {
+                script{
+                    withSonarQubeEnv("sonarqube-lh-67") {
+                         timeout(time: 300, unit: 'SECONDS') {
+                            def qg = waitForQualityGate()
+                            if (qg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                            }
+                         }
+                    }
+                }
              }
-         }
         }//end of QG stage
-        */
         stage('Artifactory'){
             steps { 
                     script{
