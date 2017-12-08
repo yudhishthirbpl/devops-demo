@@ -37,7 +37,7 @@ public class CarService {
 		car.setModelYear("2017");
 		car.setModelRegion("APAC");
 		car.setModelDesc("New Design Creta for APAC region");
-		car.setCo2e("17 - - index is high);
+		car.setCo2e("17 - - index is high");
 		cars.put(car.getModel(), car);
 		
 		car = new Car();
