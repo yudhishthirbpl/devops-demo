@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.devops.demo.controller;
 
 import java.util.Hashtable;
 
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Car;
-import com.example.demo.service.CarService;
+import com.devops.demo.model.Car;
+import com.devops.demo.service.CarService;
 
 @RestController
 @RequestMapping("/cars")

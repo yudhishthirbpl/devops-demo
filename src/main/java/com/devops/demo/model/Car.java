@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.devops.demo.model;
 
 public class Car {
 	

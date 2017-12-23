@@ -1,10 +1,10 @@
-package com.example.demo.service;
+package com.devops.demo.service;
 
 import java.util.Hashtable;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.model.Car;
+import com.devops.demo.model.Car;
 
 @Service
 public class CarService {
