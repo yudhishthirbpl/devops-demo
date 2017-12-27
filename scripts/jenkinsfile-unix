@@ -37,7 +37,7 @@ pipeline {
                     }
              }
         }//end of Review stage
-        stage('QG'){
+        stage('Quality Gate'){
             steps {
                 script{
                     withSonarQubeEnv("sonarqube-lh-67") {
@@ -76,7 +76,9 @@ pipeline {
         }//end of Push-To-Artifactory         
         stage('Deploy:Dev'){
             steps {
+                sh "rm -vf /tmp/demo*.jar"
                 sh "cp target/*demo*.jar /tmp/"
+                slackSend color: "good", message: "Application Server Up: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_VERSION_NUMBER} "
             }
         }//end of Deploy 
         /*
@@ -85,11 +87,6 @@ pipeline {
                 echo 'executing Deploy'
             }
         }//end of Fx:Selenium
-        stage('Deploy:QA'){
-            steps {
-                echo 'executing Deploy'
-            }
-        }//end of Deploy:QA
         */
     }//end of stages
     post {
