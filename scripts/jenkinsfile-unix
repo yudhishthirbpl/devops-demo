@@ -1,20 +1,23 @@
 #!groovy
+def release_version = ""
 
 pipeline {
     agent any
     environment {
-        VERSION_NUMBER = VersionNumber(projectStartDate: '2017-11-01', versionNumberString: '1.0.${BUILDS_THIS_YEAR}', versionPrefix: '')
-        BUILD_VERSION_NUMBER = "${env.VERSION_NUMBER}-b${env.BUILD_NUMBER}"
+        BUILD_VERSION_NUMBER = VersionNumber(projectStartDate: '2017-11-01', versionNumberString: '1.0.${BUILDS_THIS_YEAR}', versionPrefix: '')
     }
     stages {
         stage('Init') {
             steps {
+                script{
+                    release_version = "${env.BUILD_VERSION_NUMBER}-b${env.BUILD_NUMBER}"
+                }
+                echo "release_version ...................${release_version}"
                 echo "BUILD_VERSION_NUMBER .............. ${env.BUILD_VERSION_NUMBER}"
                 slackSend color: "good", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_VERSION_NUMBER} "
             }//end of step
         }//end of Warm-Up stage
-        
-        stage('SCM'){
+stage('SCM'){
             steps {
                     checkout([$class: 'GitSCM',
                             branches: [[name: 'master']],
@@ -27,13 +30,13 @@ pipeline {
         }//end of stage - SCM
         stage('Build'){
             steps {
-                  sh "${env.WHICH_MVN} -q clean package \"-Dmaven.test.skip=false\" \"-Dbuild-no=${env.BUILD_VERSION_NUMBER}\""  
+                  sh "${env.WHICH_MVN} -q clean package \"-Dmaven.test.skip=false\" \"-Dbuild-no=${release_version}\""  
              }//end of step
         }//end of build stage
         stage('Review'){
             steps {
                     withSonarQubeEnv("sonarqube-lh-67") {
-                        sh "${env.WHICH_MVN} \"-Dbuild-no=${env.BUILD_VERSION_NUMBER}\" \"-Dmaven.test.skip=false\" org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.projectName=\"devops-demo-dev-to-qa\" -Dsonar.projectVersion=\"${env.BUILD_VERSION_NUMBER}\" -Dsonar.sourceEncoding=\"UTF-8\" -Dsonar.language=\"java\""    
+                        sh "${env.WHICH_MVN} \"-Dbuild-no=${release_version}\" \"-Dmaven.test.skip=false\" org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.projectName=\"devops-demo-dev-to-qa\" -Dsonar.projectVersion=\"${release_version}\" -Dsonar.sourceEncoding=\"UTF-8\" -Dsonar.language=\"java\""    
                     }
              }
         }//end of Review stage
@@ -78,7 +81,7 @@ pipeline {
             steps {
                 sh "rm -vf /tmp/demo*.jar"
                 sh "cp target/*demo*.jar /tmp/"
-                slackSend color: "good", message: "Application Server Up: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_VERSION_NUMBER} "
+                slackSend color: "good", message: "Application Server Up: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${release_version} "
             }
         }//end of Deploy 
         /*
@@ -87,22 +90,28 @@ pipeline {
                 echo 'executing Deploy'
             }
         }//end of Fx:Selenium
-        */
+        stage('Deploy:QA'){
+            steps {
+                echo 'executing Deploy'
+            }
+        }//end of Deploy:QA
+        */        
+        
     }//end of stages
     post {
         always {
             //Clearing workspace
             junit allowEmptyResults: true, keepLongStdio: true, testResults: "target/surefire-reports/*.xml"
-            deleteDir()
+            //deleteDir()
             echo 'This will always run'
         }
         success {
             echo 'This will run only if successful'
-            slackSend color: "good", message: "Build Completed Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_VERSION_NUMBER} "
+            slackSend color: "good", message: "Build Completed Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${release_version} "
         }
         failure {
             echo 'This will run only if failed'
-            slackSend color: "danger", message: "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_VERSION_NUMBER} "
+            slackSend color: "danger", message: "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${release_version} "
         }
         unstable {
             echo 'This will run only if the run was marked as unstable'
