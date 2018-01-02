@@ -5,7 +5,15 @@
       "browserName": "chrome",
       "maxInstances": 1,
       "platform": "LINUX",
-      "version": "ANY"
+      "version": "ANY",
+      "cleanSession": true 
+    },
+    {
+      "browserName": "firefox",
+      "maxInstances": 1,
+      "platform": "LINUX",
+      "version": "ANY",
+      "cleanSession": true
     }
   ],
   "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
